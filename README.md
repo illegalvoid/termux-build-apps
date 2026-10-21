@@ -5,37 +5,15 @@ In this tutorial, you'll learn how to build APKs with Termux, without needing Pr
 > [!NOTE]
 > This guide assumes familiarity with Termux and Gradle basics. The steps below will help you get set up quickly.
 
-After facing challenges in building apps and testing multiple methods, I've put together the best way to do it. You can use the automated setup script or follow the manual steps below.
+After facing challenges in building apps and testing multiple methods, I've put together the best way to do it. You can follow the steps below.
 
-## Quick Setup (Automated)
+## Current Versions
 
-The fastest way to set up your build environment is using the automated setup script:
+- **Java:** OpenJDK 21 (LTS)
+- **Gradle:** 9.8.2 (latest stable)
+- **Android Platform:** API 36 (Android 16)
 
-```bash
-# Download and run the setup script
-wget -O ~/termux-setup.sh https://raw.githubusercontent.com/illegalvoid/termux-build-apps/main/setup.sh
-chmod +x ~/termux-setup.sh
-bash ~/termux-setup.sh
-```
-
-After the script completes, restart your terminal or run:
-```bash
-source ~/.bashrc
-```
-
-The script will automatically:
-- Update Termux packages
-- Install Java 21 (latest LTS)
-- Install Android SDK
-- Accept SDK licenses
-- Install Android Platform API 35
-- Install Gradle 8.10.2 (latest stable)
-- Configure aapt2 path
-- Set up all environment variables
-
-## Manual Setup
-
-If you prefer to set things up manually, follow these steps:
+## Setup
 
 ### 1. Install Termux
 
@@ -48,8 +26,8 @@ Before setting up the Android SDK, you'll need some essential packages in Termux
 ```bash
 # First update & upgrade
 pkg update -y && pkg upgrade -y
-# Then install jdk and wget
-pkg install wget openjdk-21 -y
+# Then install jdk, aapt and wget
+pkg install wget aapt2 openjdk-21 -y
 ```
 
 > **Simple Check (JDK):**  
@@ -57,11 +35,11 @@ pkg install wget openjdk-21 -y
 > ```bash
 > java -version
 > ```
-> It should output information about JDK version 21.
+> It should output the JDK version 21.
 
 ### 3. Install Android SDK
 
-Next, we need the Android SDK. You can find setup in this [repository](https://github.com/Sohil876/termux-sdk-installer), or run the following commands directly:
+Next, we need the Android SDK. You can find setup in this [repository](https://github.com/Sohil876/termux-sdk-installer) `(don't forget to ⭐ his amazing work)`, or run the following commands directly:
 
 ```bash
 # Download the installer script using wget and save it to the home directory
@@ -80,24 +58,24 @@ Before moving on, you must accept Google licenses:
 yes | sdkmanager --licenses
 ```
 
-Set the Android platform version to latest, which is `35` (Android 15):
+Set the Android platform version to latest, which is `36` (Android 16):
 
 ```bash
-yes | sdkmanager "platforms;android-35"
+yes | sdkmanager "platforms;android-36"
 ```
 
 ### 4. Install Gradle
 
-You'll need Gradle `v8.10.2` (latest stable version), which is compatible with Java 21. Download and set it up as follows:
+You'll need Gradle `v9.8.2` (latest stable version), which is compatible with Java 21. Download and set it up as follows:
 
 ```bash
 # Download Gradle
-wget -O $ANDROID_HOME/gradle-8.10.2-bin.zip https://services.gradle.org/distributions/gradle-8.10.2-bin.zip
+wget -O $ANDROID_HOME/gradle-9.8.2-bin.zip https://services.gradle.org/distributions/gradle-9.8.2-bin.zip
 # Unzip it
-unzip $ANDROID_HOME/gradle-8.10.2-bin.zip -d $ANDROID_HOME/
-mv $ANDROID_HOME/gradle-8.10.2/ $ANDROID_HOME/gradle/
+unzip $ANDROID_HOME/gradle-9.8.2-bin.zip -d $ANDROID_HOME/
+mv $ANDROID_HOME/gradle-9.8.2/ $ANDROID_HOME/gradle/
 # Remove zip file (optional)
-rm $ANDROID_HOME/gradle-8.10.2-bin.zip
+rm $ANDROID_HOME/gradle-9.8.2-bin.zip
 # Add Gradle to your PATH
 echo 'export PATH=${PATH}:${ANDROID_HOME}/gradle/bin' >> ~/.bashrc
 source ~/.bashrc
@@ -110,7 +88,7 @@ Now you can run Gradle and the Android SDK for any task you need.
 > ```bash
 > gradle -v
 > ```
-> It should show version info such as: `Gradle 8.10.2`
+> It should show version info such as: `Gradle 9.8.2`
 
 ### 5. Fix aapt2 Issue
 
@@ -119,19 +97,10 @@ There's a known issue with Gradle in Termux where it cannot find the `aapt2` bui
 Go to the file `~/.gradle/gradle.properties` (create it if it doesn't exist) and add:
 
 ```properties
-android.aapt2FromMavenOverride=/data/data/com.termux/files/home/android-sdk/build-tools/<version>/aapt2
+android.aapt2FromMavenOverride=/data/data/com.termux/files/usr/bin/aapt2
 ```
 
-Replace `<version>` with the actual version you have in your SDK (you can find it by running `ls ~/android-sdk/build-tools/`).
-
 ---
-
-## Current Versions
-
-- **Java:** OpenJDK 21 (LTS)
-- **Gradle:** 8.10.2 (latest stable)
-- **Android Platform:** API 35 (Android 15)
-- **Build Tools:** Latest available via SDK Manager
 
 ## Troubleshooting
 
@@ -144,4 +113,4 @@ If you encounter any issues:
 
 ---
 
-**Congratulations!** You can now build Android apps using Termux, without Proot. Enjoy coding!
+**Congratulations!** You can now build Android apps using Termux, Enjoy coding!
